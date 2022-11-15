@@ -28,6 +28,8 @@ local function log_data(var_name, var_value)
   if config.plugins.gitblame.debug then
     if var_value ~= nil then
       core.log("[GITBLAME] " .. var_name .. " : " .. var_value)
+    else
+      core.log("[GITBLAME] " .. var_name .. " : nil")
     end
   end
 end
@@ -81,11 +83,11 @@ function gitblame.get_blame_text(active_view)
 
     local commit_hash = blame_text:match(hash_pattern)
 
+    log_data("commit_hash", commit_hash)
+
     if commit_hash == nil then
       return nil
     end
-
-    log_data("commit_hash", commit_hash)
 
     if commit_hash == not_commited_yet_hash then
       return "Not Committed Yet"
