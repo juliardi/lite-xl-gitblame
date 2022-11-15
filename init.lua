@@ -12,14 +12,19 @@ local common = require "core.common"
 local config = require "core.config"
 local command = require "core.command"
 local DocView = require "core.docview"
+local gitblame = require "plugins.gitblame.gitblame"
 
-config.plugins.gitblame = {}
+config.plugins.gitblame = common.merge({
 
-config.plugins.gitblame.text_color = {200, 140, 220}
+  text_color = {200, 140, 220},
 
-config.plugins.gitblame.font_size = 14
+  font_size = 14,
 
-config.plugins.gitblame.max_commit_message_length = 50
+  max_commit_message_length = 50,
+
+  debug = false,
+
+}, config.plugins.gitblame)
 
 local function get_active_view()
     if core.active_view:is(DocView) then
@@ -93,61 +98,6 @@ local function get_text_coordinates()
     return nil, nil
 end
 
-local function exec(cmd)
-  local handle = io.popen(cmd)
-  if handle ~= nil then
-    local result = handle:read("*a")
-    handle:close()
-
-    return result
-  end
-
-  return ''
-end
-
-local function get_commit_message(commit_hash)
-  local cmd = "git show --no-color --pretty=format:%s --no-patch " .. commit_hash
-
-  local result = exec(cmd)
-
-  if result:len() > config.plugins.gitblame.max_commit_message_length then
-    result = result:sub(0, config.plugins.gitblame.max_commit_message_length) .. "..."
-  end
-
-  return result
-end
-
-local function get_blame_text()
-  local av = get_active_view()
-
-  if av ~= nil then
-    local abs_filename = av.doc.abs_filename
-    local line, _ = av.doc:get_selection()
-
-    local cmd = "git blame -L " .. line .. ',' .. line .. ' ' .. abs_filename
-
-    local blame = exec(cmd)
-
-    local commit_hash = blame:match "%w+"
-
-    if commit_hash == nil then
-      return nil
-    end
-
-    local username = (blame:match "[(]+%w+")
-    if username ~= nil then
-      username = username:gsub("%(","")
-    end
-
-    local datetime = blame:match "%d+[-]?%d+[-]?%d+[ ]?%d+[:]?%d+[:]?%d+"
-    local commit_message = get_commit_message(commit_hash)
-
-    local result = "(" .. username .. ") " .. datetime .. ' | ' .. commit_hash .. ' | ' .. commit_message
-
-    return result
-  end
-end
-
 local parent_draw = DocView.draw
 
 function DocView.draw(self)
@@ -156,7 +106,9 @@ function DocView.draw(self)
     if config.plugins.gitblame.show_blame then
       local message
 
-      local blame_text = get_blame_text()
+      local av = get_active_view()
+
+      local blame_text = gitblame.get_blame_text(av)
 
       if blame_text ~= nil then
         message = "Git Blame | " .. blame_text
@@ -189,7 +141,7 @@ function DocView.on_text_input(self, text)
 end
 
 command.add(predicate, {
-    ["git blame:show"] = function()
+    ["git blame:toggle"] = function()
         toggle_gitblame()
     end
 })
