@@ -13,15 +13,25 @@ local not_commited_yet_hash = "00000000"
 local not_git_repo_message = "fatal: not a git repository"
 
 local function exec(cmd)
-  local handle = io.popen(cmd)
-  if handle ~= nil then
-    local result = handle:read("*a")
-    handle:close()
+    local proc = process.start(cmd)
 
-    return result
-  end
+    if proc then
 
-  return ''
+        local output = ""
+
+        while true do
+            local rdbuf = proc:read_stdout()
+            if not rdbuf then
+                break
+            else
+                output = output .. rdbuf
+            end
+        end
+
+        return output
+    end
+
+    return nil
 end
 
 local function log_data(var_name, var_value)
@@ -35,7 +45,7 @@ local function log_data(var_name, var_value)
 end
 
 local function get_commit_message(commit_hash)
-  local cmd = "git show --no-color --pretty=format:%s --no-patch " .. commit_hash
+  local cmd = {"git", "show", "--no-color", "--pretty=format:%s", "--no-patch", commit_hash}
 
   local result = exec(cmd)
 
@@ -59,9 +69,7 @@ function gitblame.get_blame_text(active_view)
     local abs_filename = active_view.doc.abs_filename
     local line, _ = active_view.doc:get_selection()
 
-    local git_command = "git blame -L " .. line .. ',' .. line .. ' ' .. abs_filename
-
-    log_data("git_command", git_command)
+    local git_command = {"git", "blame", "-L", line .. "," .. line, abs_filename}
 
     local git_output = exec(git_command)
 

@@ -1,4 +1,4 @@
--- mod-version:3 -- lite-xl 2.1
+-- mod-version:3
 
 ----------------------------------------------------------------
 -- NAME        : gitblame
@@ -130,14 +130,6 @@ end
 
 local function toggle_gitblame()
    config.plugins.gitblame.show_blame = not config.plugins.gitblame.show_blame
-end
-
-local parent_text_input = DocView.on_text_input
-
-function DocView.on_text_input(self, text)
-  parent_text_input(self, text)
-
-  config.plugins.gitblame.show_blame = false
 end
 
 command.add(predicate, {
