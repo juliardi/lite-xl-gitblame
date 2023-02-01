@@ -16,13 +16,54 @@ local gitblame = require "plugins.gitblame.gitblame"
 
 config.plugins.gitblame = common.merge({
 
-  text_color = {200, 140, 220},
+  text_color = {180, 180, 180},
 
   font_size = 14,
 
   max_commit_message_length = 50,
 
   debug = false,
+
+  git_executable = "/usr/bin/git",
+
+  config_spec = {
+    name = "Git Blame",
+    {
+      label = "Text Color",
+      description = "Blame text color.",
+      path = "text_color",
+      type = "COLOR",
+      default = "#b7b7b7"
+    },
+    {
+      label = "Font Size",
+      description = "Blame text font size.",
+      path = "font_size",
+      type = "NUMBER",
+      default = 14
+    },
+    {
+      label = "Max Commit Message Length",
+      description = "Maximum commit message length shown.",
+      path = "max_commit_message_length",
+      type = "NUMBER",
+      default = 50
+    },
+    {
+      label = "Debug",
+      description = "Show debug message.",
+      path = "debug",
+      type = "TOGGLE",
+      default = false
+    },
+    {
+      label = "Git Executable Path",
+      description = "Git executable path.",
+      path = "git_executable",
+      type = "STRING",
+      default = "/usr/bin/git"
+    },
+  },
 
 }, config.plugins.gitblame)
 

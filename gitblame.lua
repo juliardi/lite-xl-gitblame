@@ -37,7 +37,15 @@ end
 local function log_data(var_name, var_value)
   if config.plugins.gitblame.debug then
     if var_value ~= nil then
-      core.log("[GITBLAME] " .. var_name .. " : " .. var_value)
+      if type(var_value) == 'table' then
+        core.try(function (var)
+            local data = table.concat(var, " ")
+            core.log("[GITBLAME] " .. var_name .. " : " .. data)
+          end, var_value
+        )
+      else
+        core.log("[GITBLAME] " .. var_name .. " : " .. var_value)
+      end
     else
       core.log("[GITBLAME] " .. var_name .. " : nil")
     end
@@ -45,12 +53,19 @@ local function log_data(var_name, var_value)
 end
 
 local function get_commit_message(commit_hash)
-  local cmd = {"git", "show", "--no-color", "--pretty=format:%s", "--no-patch", commit_hash}
+  local git_command = {config.plugins.gitblame.git_executable, "show", "--no-color", "--pretty=format:%s", "--no-patch", commit_hash}
 
-  local result = exec(cmd)
+  log_data("get_commit_message.git_command", git_command)
 
-  if result:len() > config.plugins.gitblame.max_commit_message_length then
-    result = result:sub(0, config.plugins.gitblame.max_commit_message_length) .. "..."
+  local result = exec(git_command)
+  if result ~= nil then
+    local length = result:len()
+
+    if length ~= nil then
+      if length > config.plugins.gitblame.max_commit_message_length then
+        result = result:sub(0, config.plugins.gitblame.max_commit_message_length) .. "..."
+      end
+    end
   end
 
   return result
@@ -69,7 +84,9 @@ function gitblame.get_blame_text(active_view)
     local abs_filename = active_view.doc.abs_filename
     local line, _ = active_view.doc:get_selection()
 
-    local git_command = {"git", "blame", "-L", line .. "," .. line, abs_filename}
+    local git_command = {config.plugins.gitblame.git_executable, "blame", "-L", line .. "," .. line, abs_filename}
+
+    log_data("get_blame_text.git_command", git_command)
 
     local git_output = exec(git_command)
 

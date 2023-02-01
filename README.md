@@ -13,8 +13,9 @@ This plugin is inspired by [Sublime Text's Git Blame Package](https://github.com
 Clone this repo into your plugins folder, usually `LITE_XL_CONFIG_DIR/plugins` (in case of linux, this is `~/.config/lite-xl/plugins`).
 
 ## Configuration
-
-You can configure this plugin by adding this snippet to `LITE_XL_CONFIG_DIR/init.lua` (in case of linux, this is `~/.config/lite-xl/init.lua`).
+There are 2 options you can select to configure this plugin.
+### 1. Via Configuration File
+You can configure this plugin by adding this snippet to `LITE_XL_CONFIG_DIR/init.lua` (For Linux, this usually translates to `~/.config/lite-xl/init.lua`).
 
 ```lua
 config.plugins.gitblame = {
@@ -27,8 +28,17 @@ config.plugins.gitblame = {
   -- If debug = true, then this plugin will output a log which can be accessed
   -- from "Core : Open Log" command
   debug = false,
+  -- Git executable path
+  git_executable = "/usr/bin/git",
 }
 ```
+
+### 2. Via Settings UI
+This plugin also support configuration from Settings UI.
+- Open Lite-XL Settings UI.
+- Navigate to `Plugins` tab.
+- Find `Git Blame` settings.
+![Gitblame Settings UI](screenshot_3.png)
 
 ## Usage
 
