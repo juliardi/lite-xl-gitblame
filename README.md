@@ -10,7 +10,10 @@ This plugin is inspired by [Sublime Text's Git Blame Package](https://github.com
 
 ## Installation
 
-Clone this repo into your plugins folder, usually `LITE_XL_CONFIG_DIR/plugins` (in case of linux, this is `~/.config/lite-xl/plugins`).
+Clone this repo into your `plugins` folder and rename the cloned folder to `gitblame`. The `plugins` folder is usually at `LITE_XL_CONFIG_DIR/plugins` (in case of linux, this is `~/.config/lite-xl/plugins`).
+```
+$ git clone https://github.com/juliardi/lite-xl-gitblame.git gitblame
+```
 
 ## Configuration
 There are 2 options you can select to configure this plugin.
