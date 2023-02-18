@@ -44,10 +44,18 @@ local function log_data(var_name, var_value)
           end, var_value
         )
       else
-        core.log("[GITBLAME] " .. var_name .. " : " .. var_value)
+        core.try(
+          function (name, value)
+            core.log("[GITBLAME] " .. name .. " : " .. value)
+          end, var_name, var_value
+        )
       end
     else
-      core.log("[GITBLAME] " .. var_name .. " : nil")
+      core.try(
+        function (name)
+          core.log("[GITBLAME] " .. name .. " : nil")
+        end, var_name
+      )
     end
   end
 end

@@ -29,6 +29,13 @@ config.plugins.gitblame = common.merge({
   config_spec = {
     name = "Git Blame",
     {
+      label = "Debug",
+      description = "Display debugging message on the log.",
+      path = "debug",
+      type = "TOGGLE",
+      default = false
+    },
+    {
       label = "Text Color",
       description = "Blame text color.",
       path = "text_color",
@@ -48,13 +55,6 @@ config.plugins.gitblame = common.merge({
       path = "max_commit_message_length",
       type = "NUMBER",
       default = 50
-    },
-    {
-      label = "Debug",
-      description = "Show debug message.",
-      path = "debug",
-      type = "TOGGLE",
-      default = false
     },
     {
       label = "Git Executable Path",
