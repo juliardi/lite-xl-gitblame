@@ -3,9 +3,10 @@ local config = require "core.config"
 
 local gitblame = {}
 
-local blame_pattern = "%w+[ (%w]+[ ]+%d+[-]?%d+[-]?%d+[ ]?%d+[:]?%d+[:]?%d+[ ]+[+-]?%d+"
+local blame_pattern = "%w+[ (_.%w]+[ ]+%d+[-]?%d+[-]?%d+[ ]?%d+[:]?%d+[:]?%d+[ ]+[+-]?%d+"
 local hash_pattern = "[0-9a-f]+"
-local username_pattern = "[ ]*%w+"
+-- local username_pattern = "[ _.%w]+"
+local opening_bracket_pattern = "[ (]*"
 local datetime_pattern = "%d+[-]?%d+[-]?%d+[ ]?%d+[:]?%d+[:]?%d+[ ]+[+-]?%d+"
 
 local not_commited_yet_hash = "00000000"
@@ -132,7 +133,11 @@ function gitblame.get_blame_text(active_view)
 
     blame_text = truncate_blame_text(blame_text)
 
-    local username = blame_text:match(username_pattern)
+    log_data("truncated_blame_text", blame_text)
+
+    local _, username_start_index = blame_text:find(opening_bracket_pattern)
+
+    local username = blame_text:sub(username_start_index+1, blame_text:len() - 1)
 
     log_data("username", username)
 
