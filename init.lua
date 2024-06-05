@@ -16,7 +16,7 @@ local gitblame = require "plugins.gitblame.gitblame"
 
 config.plugins.gitblame = common.merge({
 
-  text_color = {180, 180, 180},
+  text_color = { common.color "#b7b7b7" },
 
   font_size = 14,
 
